@@ -37,10 +37,361 @@
 					</div> 
 					<div class="panel-body">
 						<ul>
-							<li><p>Event : Get an all event with stuffs and attendees linked</p></li>
+							<li><p>Event : Get an all event with stuffs and attendees linked, create, delete, update</p></li>
 							<li><p>User : Create, get one by ID, get the events linked to a user</p></li>
+							<li><p>Attendee : create, delete, update </p></li>
+							<li><p>Stuffs : create, delete, update </p></li>
 						</ul>
 					</div> 
+				</div>
+
+				<div class="panel panel-warning"> 
+					<div class="panel-heading"> 
+						<h3 class="panel-title">To implement</h3> 
+					</div> 
+					<div class="panel-body">
+						<ul>
+							<li><p>Task : integrate Tasks in a similar way as Stuffs </p></li>
+							<li><p>User : Create user on the system ready for authentication</p></li>
+							<li><p>Social Authentication with Facebook and Google</p></li>
+							<li><p>Implement restriction as who can do what (only admin can modify, etc..)</p></li>
+						</ul>
+					</div> 
+				</div>
+			</div>
+
+			<div class="bs-docs-section">
+				<h1>To start</h1>
+				<p>The entry point of the application is : http://clementhamon.com/IDP/public</p>
+				<p>This might change in the future</p>
+				<p>If you want to test the request without coding them I'll recommend using something like <a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en">Postman</a> for Chrome</p>
+
+				<h1>Event</h1>
+
+				<div class="method" id="eventById">
+					<h2>Get event by id</h2>
+					<p>Get the event by is id, return the event infos as well as the stuffs, tasks and attendees linked to it</p>
+					<table class="table">
+					  <tr>
+					  	<td>URL</td>
+					  	<td>
+					  		<code>event/:eventId</code>
+							<p>eventId : id of the event</p>
+					  	</td>
+					  </tr>
+					  <tr>
+					  	<td>Method</td>
+					  	<td>GET</td>
+					  </tr>
+					<tr>
+						<td>URL Params</td>
+						<td>
+							<b>Required:</b>
+							<code>eventId : integer</code>
+							<p>example: eventId=23</p>
+						</td>
+					</tr>
+
+					  <tr>
+					  	<td>Success response</td>
+					  	<td>
+					  		<p><b>Code :</b> 200</p>
+					  		<b>Content :</b>
+					  		<pre>{
+	  "id": "1",
+	  "name": "Super party",
+	  "linkId": "44b74bd03e59045dde0afaf60e3a04ff",
+	  "date": "2016-04-01",
+	  "duration": "240",
+	  "locationName": "Bali",
+	  "locationLat": null,
+	  "locationLong": null,
+	  "description": "Awesome test Party",
+	  "coverPicture": null,
+	  "spotifyPlaylist": null,
+	  "stuffs": [
+	    {
+	      "id": "1",
+	      "name": "Martini",
+	      "event": "1",
+	      "owner": "2039"
+	    },
+	    {
+	      "id": "3",
+	      "name": "Chips",
+	      "event": "1",
+	      "owner": "2040"
+	    }
+	  ],
+	  "attendee": [
+	    {
+	      "id": "2039",
+	      "firstName": "Tom",
+	      "lastName": "Bombadil",
+	      "avatar": "http://images.com/image.jpg"
+	    },
+	    {
+	      "id": "2040",
+	      "firstName": "Franky",
+	      "lastName": "Vincent",
+	      "avatar": "http://images.com/imag.png"
+	    }
+	  ]
+	}
+							</pre>
+					  	</td>
+					  </tr>
+
+					  <tr>
+					  	<td><p>Error response</p></td>
+					  	<td>
+					  		<p><b>Code :</b> 400</p>
+					  		<b>Content :</b>
+					  		<pre>{
+	  "error": "Error, no event correspond to this id"
+	}</pre>
+					  	</td>
+					  </tr>
+
+					</table>
+				</div>
+
+				<div class="method">
+					<h2>Get event by link</h2>
+					<p>Get the event by is the hash used as a linkId, return the event infos as well as the stuffs, tasks and attendees linked to it</p>
+					<p>Similar to <a href="#eventById">eventById</a> but this method will be the one with the shared links</p>
+					<p>This way we prevent people to guess the link to party they are not supposed to join</p>
+					<table class="table">
+					  <tr>
+					  	<td>URL</td>
+					  	<td>
+					  		<code>event/link/:eventLink</code>
+							<p>eventLink : linkId of the event</p>
+					  	</td>
+					  </tr>
+					  <tr>
+					  	<td>Method</td>
+					  	<td>GET</td>
+					  </tr>
+					<tr>
+						<td>URL Params</td>
+						<td>
+							<b>Required:</b>
+							<code>eventId : string</code>
+							<p>example: eventLink=44b74bd03e59045dde0afaf60e3a04ff</p>
+						</td>
+					</tr>
+
+					  <tr>
+					  	<td>Success response</td>
+					  	<td>
+					  		<p>Similar to <a href="#eventById">get event by id</a></p>
+					  	</td>
+					  </tr>
+
+					  <tr>
+					  	<td><p>Error response</p></td>
+					  	<td>
+					  		<p>Similar to <a href="#eventById">get event by id</a></p>
+					  	</td>
+					  </tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="getEventAttendees">
+					<h2>Get attendees from an event</h2>
+					<p>Get the attendees linked to an event by is id, return the list of attendees going to the event</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/:eventId/attendees</code>
+								<p>eventId : id of the event</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>GET</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>eventId : integer</code>
+								<p>example: eventId=23</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>[
+   {
+    "id": 2039,
+    "firstName": "Tom",
+    "lastName": "Bombadil",
+    "avatar": "http://clementhamon.com/host/avatar-square.jpg"
+  },
+  {
+    "id": 2040,
+    "firstName": "Franky",
+    "lastName": "Vincent",
+    "avatar": "http://clementhamon.com/host/avatar-square.jpg"
+  }
+]</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<!-- <p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre></pre> -->
+
+								<p>No error yet, if there is no attendees the results will be an empty array</p>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+
+			<div class="method" id="getEventStuffs">
+					<h2>Get stuffs from an event</h2>
+					<p>Get the stuff linked to an event by is id, return the list of stuffs linked to it</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/:eventId/stuffs</code>
+								<p>eventId : id of the event</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>GET</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>eventId : integer</code>
+								<p>example: eventId=23</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>[
+  {
+    "id": 1,
+    "name": "Martini",
+    "event": 1,
+    "owner": 2039
+  },
+  {
+    "id": 3,
+    "name": "Chips",
+    "event": 1,
+    "owner": 2040
+  }
+]</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p>No error yet, if there is no stuffs the results will be an empty array</p>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="createEvent">
+					<h2>Create and event</h2>
+					<p>Create an event and insert it into the database</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/new/<code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>name : string</code>
+								<p>example: eventId="Wild camping trip"</p>
+
+								<b>Optionnal:</b><br>
+								<code>date : date</code>
+								<p>example: date=2016-04-01 in yyyy-mm-dd</p>
+								<code>time : time</code>
+								<p>example: time=15:00:00 in HH:MM:SS</p>
+								<code>duration : int</code>
+								<p>example: duration=120 in minutes</p>
+								<code>locationName : string</code>
+								<p>example: duration="Kungshamra 51"</p>
+
+								<code>locationLat : decimal</code>
+								<p>example: locationLat=60.205491</p>
+
+								<code>locationLong : decimal</code>
+								<p>example: locationLong=24.655900</p>
+
+								<code>description : string</code>
+								<p>example: description="Everybody comes, bring your swag, Mohit will teach us the sun dance at sunset"</p>
+
+								<code>coverPicture : string</code>
+								<p>example: description="http://wallpaperus.org/wallpapers/06/211/otters-underwater-2623x1780-wallpaper-946449.jpg"</p>
+
+								<code>spotifyPlaylist : string</code>
+								<p>example: this shit is unclear"</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 5,
+  "msg": "Event created"
+}</pre>
+								<p>id is the id in the database of the newly created event</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, new event couldn't be created : you need to specify a name"
+}</pre>
+								<p><b>Code :</b> 400</p>
+								<pre>{
+  "error": "Error, new event couldn't be created"
+}</pre>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>

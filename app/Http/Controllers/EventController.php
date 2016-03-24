@@ -13,6 +13,10 @@ class EventController extends Controller
 
         $event = DB::select("SELECT * FROM Event WHERE id = ?",[$eventId]);
 
+        if (empty($event)) {
+            return response()->json([ "error"=>"Error, no event correspond to this id"],400);
+        }
+
         $event = $event[0];
         
         $stuffs = DB::select("SELECT * FROM Stuff WHERE event = ?",[$eventId]);
@@ -24,6 +28,8 @@ class EventController extends Controller
         $event->stuffs = $stuffs;
         $event->attendee = $attendee;
 
+
+
         return response()->json($event,200);
     }
 
@@ -31,6 +37,10 @@ class EventController extends Controller
     public function getEventByLink($eventLink) {
 
         $event = DB::select("SELECT * FROM Event WHERE linkId = ?",[$eventLink]);
+
+        if (empty($event)) {
+            return response()->json([ "error"=>"Error, no event correspond to this id"],400);
+        }
 
         $event = $event[0];
         
