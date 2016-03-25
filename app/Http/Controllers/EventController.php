@@ -84,6 +84,7 @@ class EventController extends Controller
         }
     }
 
+    //Delete an event as well as the Attendees and Stuffs linked to it
     public function deleteEvent($id){
 
         // If no id is specified in the Request we throw an error as the delete wouldn't work
@@ -91,10 +92,16 @@ class EventController extends Controller
             return response()->json([ "error"=>"Error, no id was specified"], 400);
         }
 
-        $content = DB::delete("DELETE FROM `Event` WHERE id = ?",
+        $deletedAttendee = DB::delete("DELETE FROM `Attendee` WHERE eventId = ?",
                   [$request->input('id')]);
 
-        if ($content == 1) {
+        $deletedStuffs = DB::delete("DELETE FROM `Stuffs` WHERE event = ?",
+                  [$request->input('id')]);
+
+        $deletedEvent = DB::delete("DELETE FROM `Event` WHERE id = ?",
+                  [$request->input('id')]);
+
+        if ($deletedEvent == 1) {
             return response()->json(array("msg" => "Event deleted" ), 200);
 
         } else {
