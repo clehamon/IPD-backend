@@ -18,19 +18,10 @@ class EventController extends Controller
         }
 
         $event = $event[0];
-        
-        $stuffs = DB::select("SELECT * FROM Stuff WHERE event = ?",[$eventId]);
-        
-        $attendee = DB::select("SELECT u.id, u.firstName, u.lastName, u.avatar FROM User as u, Attendee as a
-        						WHERE a.eventId = ?
-        						AND a.userId = u.id",[$eventId]);
 
-        $event->stuffs = $stuffs;
-        $event->attendee = $attendee;
+        return response()->json($this->returnEvent($event));
 
-
-
-        return response()->json($event,200);
+       
     }
 
     // return all information about an event plus the stuffs and users linked to it from the linkId
@@ -39,21 +30,50 @@ class EventController extends Controller
         $event = DB::select("SELECT * FROM Event WHERE linkId = ?",[$eventLink]);
 
         if (empty($event)) {
-            return response()->json([ "error"=>"Error, no event correspond to this id"],400);
+            return response()->json([ "error"=>"Error, no event correspond to this link"],400);
         }
 
         $event = $event[0];
-        
+
+        return response()->json($this->returnEvent($event));
+    }
+
+    public function returnEvent($event){
+
         $stuffs = DB::select("SELECT * FROM Stuff WHERE event = ?",[$event->id]);
         
         $attendee = DB::select("SELECT u.id, u.firstName, u.lastName, u.avatar FROM User as u, Attendee as a
                                 WHERE a.eventId = ?
                                 AND a.userId = u.id",[$event->id]);
 
+        //Give a row for each couple task/owner linked to this event
+        $tasksResult = DB::select("SELECT t.id, t.name, t.completed, u.firstName, u.lastName, u.avatar, u.id as ownerId FROM Owner as o, Task as t, User as u
+                                WHERE t.event = ?
+                                AND o.item = t.id
+                                AND o.user = u.id
+                                AND o.type = ?",[$event->id, "task"]);
+
+        // Here we group the similar tasks together and put the different owner on an 'owners' array as an attribute of the task
+        $tasks = array();
+        foreach ($tasksResult as $task) {
+            $owner = array('id' => $task->ownerId,'lastName' => $task->lastName,'firstName' => $task->firstName,'avatar' => $task->avatar );
+            if (array_key_exists($task->id, $tasks)) {
+                array_push($tasks[$task->id]["owners"], $owner); 
+            } else{
+                $currentTask = array('id' => $task->id,
+                                    'name' => $task->name,
+                                    'completed' => $task->completed,
+                                    'owners' => [$owner]
+                                    );
+                $tasks[$task->id] = $currentTask;
+            }
+        }
+
         $event->stuffs = $stuffs;
+        $event->tasks = $tasks;
         $event->attendee = $attendee;
 
-        return response()->json($event,200);
+        return $event;
     }
 
     public function createEvent(Request $request) {
@@ -84,8 +104,8 @@ class EventController extends Controller
         }
     }
 
-    //Delete an event as well as the Attendees and Stuffs linked to it
-    public function deleteEvent($id){
+    //Delete an event as well as the Attendees, Tasks and Stuffs linked to it
+    public function deleteEvent(Request $request){
 
         // If no id is specified in the Request we throw an error as the delete wouldn't work
         if (!$request->input('id')) {
@@ -95,7 +115,10 @@ class EventController extends Controller
         $deletedAttendee = DB::delete("DELETE FROM `Attendee` WHERE eventId = ?",
                   [$request->input('id')]);
 
-        $deletedStuffs = DB::delete("DELETE FROM `Stuffs` WHERE event = ?",
+        $deletedStuff = DB::delete("DELETE FROM `Stuff` WHERE event = ?",
+                  [$request->input('id')]);
+
+        $deletedTask = DB::delete("DELETE FROM `Task` WHERE event = ?",
                   [$request->input('id')]);
 
         $deletedEvent = DB::delete("DELETE FROM `Event` WHERE id = ?",
@@ -114,7 +137,7 @@ class EventController extends Controller
         $eventColumns = array("name","linkId","date","time","duration","locationName","locationLat","locationLong","description","coverPicture","spotifyPlaylist");
 
         if (!$request->input('id')) {
-            return response()->json([ "error"=>"Error, no id was specified"], 400);
+            return response()->json([ "error"=>"Error, new event couldn't be updated : you need to specify an id"], 400);
         }
 
         $updates = array();

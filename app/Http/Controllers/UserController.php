@@ -39,17 +39,17 @@ class UserController extends Controller
           $avatar = $request->input('avatar');
         }
 
-        $content = DB::insert("INSERT INTO User(firstName, lastName, email, avatar, source) 
-                                VALUES (?, ?, ?, ?, ?) ;",
-                                [ $request->input('firstName'),
-                                  $request->input('lastName'),
-                                  $request->input('email'),
-                                  $avatar,
-                                  "origin",
-                                ] );
+        $id = DB::table('User')->insertGetId([
+                                    "firstName" => $request->input('firstName'),
+                                    "lastName" => $request->input('lastName'),
+                                    "email" => $request->input('email'),
+                                    "password" => md5($request->input('password')),
+                                    "avatar" => $avatar,
+                                    "source" =>"origin",
+                                ]);
 
-        if ($content == 1) {
-            return response()->json('Success',200);
+        if ($id > 0) {
+            return response()->json([ "id" => $id, "msg"=>"User successfully created"],200);
 
         } else {
             return response()->json([ "error"=>"Error, new user couldn't be created"],409);
@@ -59,18 +59,26 @@ class UserController extends Controller
     }
 
     // Delete a user from the database based on it's id
-    public function deleteUser($id){
+    public function deleteUser(Request $request){
       
       // If no id is specified in the Request we throw an error as the delete wouldn't work
-      if (!$request->input('id')) {
+        if (!$request->input('id')) {
             return response()->json([ "error"=>"Error, no id was specified"], 400);
-      }
+        }
 
-      $content = DB::delete("DELETE FROM `User` WHERE id = ?",
+        $updateStuff = DB::table("Stuff")
+                        ->where('owner', $request->input('id'))
+                        ->update(["owner" => NULL]);
+
+        $removeAttendee = DB::table('Attendee')
+                        ->where('userId', $request->input('id'))
+                        ->delete();
+
+        $deletedUser = DB::delete("DELETE FROM `User` WHERE id = ?",
                   [$request->input('id')]);
 
-      if ($content == 1) {
-        return response()->json('Success', 200);
+        if ($deletedUser > 0) {
+            return response()->json([ "msg"=>"User successfully deleted"], 200);
 
         } else {
             return response()->json([ "error"=>"Error, User couldn't be deleted"], 400);
@@ -91,7 +99,7 @@ class UserController extends Controller
                                 [$id]);
 
         foreach ($events as $event) {
-            $stuffs = DB::select("SELECT s.name
+            $stuffs = DB::select("SELECT s.name, s.owner
                                  FROM Stuff AS s
                                  WHERE s.event = ?
                                  AND s.owner = ?",

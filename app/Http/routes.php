@@ -11,7 +11,7 @@
 |
 */
 
-$app->get('/', function () use ($app) {
+$app->get('(.*)', function () use ($app) {
     return $app->version();
 });
 
@@ -54,6 +54,16 @@ $app->put('stuff/update', 'StuffController@updateStuff');
 
 $app->delete('stuff/delete', 'StuffController@deleteStuff');
 
+// Task methods
+
+$app->get('task/{id}', 'TaskController@getTask');
+
+$app->post('task/new', 'TaskController@createTask');
+
+//$app->put('task/update', 'TaskController@updateStuff');
+
+$app->delete('task/delete', 'TaskController@deleteTask');
+
 // Attendee methods
 
 $app->post('attendee/new', 'AttendeeController@createAttendee');
@@ -61,3 +71,5 @@ $app->post('attendee/new', 'AttendeeController@createAttendee');
 $app->delete('attendee/delete', 'AttendeeController@deleteAttendee');
 
 $app->put('attendee/update', 'AttendeeController@updateAttendee');
+
+

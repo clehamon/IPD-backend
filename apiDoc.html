@@ -12,10 +12,49 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-3">
-			<nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix">
+			<nav class="bs-docs-sidebar hidden-print affix" style=" max-height: 100%;overflow-y: auto;">
 				<ul class="nav bs-docs-sidenav">
 					<li>
-						
+						<ul>
+							<a href="#"><h3>Intro</h3></a>
+							<li style="list-style: none;">
+								<ul><a href="#state">State of the API</a></ul>
+								<ul><a href="#toStart">To Start</a></ul>
+								<ul><a href="#fyi">FYI</a></ul>
+							</li>
+						</ul>
+						<ul>
+							<a href="#event"><h3>Event</h3></a>
+							<li style="list-style: none;">
+								<ul><a href="#eventById">@getEventById</a></ul>
+								<ul><a href="#eventByLink">@getEventByLink</a></ul>
+								<ul><a href="#getEventAttendees">@getEventAttendees</a></ul>
+								<ul><a href="#getEventStuffs">@getEventStuffs</a></ul>
+								<ul><a href="#createEvent">@createEvent</a></ul>
+								<ul><a href="#deleteEvent">@deleteEvent</a></ul>
+								<ul><a href="#updateEvent">@updateEvent</a></ul>
+							</li>
+						</ul>
+
+						<ul>
+							<a href="#stuff"><h3>Stuff</h3></a>
+							<li style="list-style: none;">
+								<ul><a href="#getStuff">@getStuff</a></ul>
+								<ul><a href="#createStuff">@createStuff</a></ul>
+								<ul><a href="#deleteStuff">@deleteStuff</a></ul>
+								<ul><a href="#updateStuff">@updateStuff</a></ul>
+							</li>
+						</ul>
+
+						<ul>
+							<a href="#user"><h3>User</h3></a>
+							<li style="list-style: none;">
+								<ul><a href="#createUser">@createUser</a></ul>
+								<ul><a href="#getUser">@getUser</a></ul>
+								<ul><a href="#getUserEvents">@getUserEvents</a></ul>
+								<ul><a href="#deleteUser">@deleteUser</a></ul>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</nav>
@@ -24,11 +63,11 @@
 		<div class="col-md-9">
 			<div class="bs-docs-section">
 				<h1 id="overview" class="page-header"><a class="anchorjs-link " href="#overview" aria-label="Anchor link for: overview" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>API Documentation</h1>
-				<p class="lead">Hello, hello you beautiful aspiring genius web developer. You'll find on this page the <span style="text-decoration:underline; font-weight: bold;">OFFICIAL</span> API Documentation for the IDP Project. To put it simply, every methods you need to acquire not only the best grade evar, but also fame and the respect of your peers</p>
+				<p class="lead">Hello, hello you beautiful aspiring genius web developer. You'll find on this page the <span style="text-decoration:underline; font-weight: bold;">OFFICIAL</span> API Documentation for the IDP Project. To put it simply, every methods you need to acquire not only the best grade evaaar, but also fame and the respect of your peers</p>
 			</div>
 
 			<div class="bs-docs-section">
-				<h2 id="panels-alternatives"><a class="anchorjs-link " href="#api-state" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>State of the API</h2>
+				<h2 id="state"><a class="anchorjs-link " href="#api-state" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>State of the API</h2>
 				<p>Here is indicated what is implemented in the API at that point in time and what is soon to be implemented</p>
 
 				<div class="panel panel-success"> 
@@ -60,11 +99,18 @@
 				</div>
 			</div>
 
-			<div class="bs-docs-section">
+			<div class="bs-docs-section" id="toStart">
 				<h1>To start</h1>
 				<p>The entry point of the application is : http://clementhamon.com/IDP/public</p>
 				<p>This might change in the future</p>
 				<p>If you want to test the request without coding them I'll recommend using something like <a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en">Postman</a> for Chrome</p>
+
+				<h2 id="fyi">FYI</h2>
+				<p>If you update an int field to NULL it won't set it to NULL but to 0</p>
+				<p>If you update a row with the exact same set of values already in it'll likely throw an error</p>
+			</div>
+
+			<div class="bs-docs-section" id="event">
 
 				<h1>Event</h1>
 
@@ -156,7 +202,7 @@
 					</table>
 				</div>
 
-				<div class="method">
+				<div class="method" id="eventByLink">
 					<h2>Get event by link</h2>
 					<p>Get the event by is the hash used as a linkId, return the event infos as well as the stuffs, tasks and attendees linked to it</p>
 					<p>Similar to <a href="#eventById">eventById</a> but this method will be the one with the shared links</p>
@@ -258,66 +304,65 @@
 
 					</table>
 				</div>
-			</div>
 
-			<div class="method" id="getEventStuffs">
-					<h2>Get stuffs from an event</h2>
-					<p>Get the stuff linked to an event by is id, return the list of stuffs linked to it</p>
-					<table class="table">
-						<tr>
-							<td>URL</td>
-							<td>
-								<code>event/:eventId/stuffs</code>
-								<p>eventId : id of the event</p>
-							</td>
-						</tr>
-						<tr>
-							<td>Method</td>
-							<td>GET</td>
-						</tr>
-						<tr>
-							<td>URL Params</td>
-							<td>
-								<b>Required:</b>
-								<code>eventId : integer</code>
-								<p>example: eventId=23</p>
-							</td>
-						</tr>
+				<div class="method" id="getEventStuffs">
+						<h2>Get stuffs from an event</h2>
+						<p>Get the stuff linked to an event by is id, return the list of stuffs linked to it</p>
+						<table class="table">
+							<tr>
+								<td>URL</td>
+								<td>
+									<code>event/:eventId/stuffs</code>
+									<p>eventId : id of the event</p>
+								</td>
+							</tr>
+							<tr>
+								<td>Method</td>
+								<td>GET</td>
+							</tr>
+							<tr>
+								<td>URL Params</td>
+								<td>
+									<b>Required:</b>
+									<code>eventId : integer</code>
+									<p>example: eventId=23</p>
+								</td>
+							</tr>
 
-						<tr>
-							<td>Success response</td>
-							<td>
-								<p><b>Code :</b> 200</p>
-								<b>Content :</b>
-								<pre>[
-  {
-    "id": 1,
-    "name": "Martini",
-    "event": 1,
-    "owner": 2039
-  },
-  {
-    "id": 3,
-    "name": "Chips",
-    "event": 1,
-    "owner": 2040
-  }
-]</pre>
-							</td>
-						</tr>
+							<tr>
+								<td>Success response</td>
+								<td>
+									<p><b>Code :</b> 200</p>
+									<b>Content :</b>
+									<pre>[
+	  {
+	    "id": 1,
+	    "name": "Martini",
+	    "event": 1,
+	    "owner": 2039
+	  },
+	  {
+	    "id": 3,
+	    "name": "Chips",
+	    "event": 1,
+	    "owner": 2040
+	  }
+	]</pre>
+								</td>
+							</tr>
 
-						<tr>
-							<td><p>Error response</p></td>
-							<td>
-								<p>No error yet, if there is no stuffs the results will be an empty array</p>
-							</td>
-						</tr>
+							<tr>
+								<td><p>Error response</p></td>
+								<td>
+									<p>No error yet, if there is no stuffs the results will be an empty array</p>
+								</td>
+							</tr>
 
-					</table>
+						</table>
 				</div>
 
 				<div class="method" id="createEvent">
-					<h2>Create and event</h2>
+					<h2>Create event</h2>
 					<p>Create an event and insert it into the database</p>
 					<table class="table">
 						<tr>
@@ -360,7 +405,7 @@
 								<p>example: description="http://wallpaperus.org/wallpapers/06/211/otters-underwater-2623x1780-wallpaper-946449.jpg"</p>
 
 								<code>spotifyPlaylist : string</code>
-								<p>example: this shit is unclear"</p>
+								<p>example: spotifyPlaylist="https://play.spotify.com/user/patpatou/playlist/7fRekMsx0g0T3hm6XUpZwT"</p>
 							</td>
 						</tr>
 
@@ -393,6 +438,556 @@
 						</tr>
 					</table>
 				</div>
+
+				<div class="method" id="deleteEvent">
+					<h2>Delete event</h2>
+					<p>Delete an event and all the Stuffs and Tasks linked to it</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/delete</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>DELETE</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : int</code>
+								<p>example: id=239</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Event deleted"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, event couldn't be deleted : you need to specify a id"
+}</pre>
+								<p><b>Code :</b> 400</p>
+								<pre>{
+  "error": "Error, event couldn't be deleted"
+}</pre>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="updateEvent">
+					<h2>Update event</h2>
+					<p>Update an event  into the database</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/update/<code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>PUT</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : int</code>
+								<p>example: id=298</p>
+
+								<b>Optionnal:</b><br>
+								<code>name : string</code>
+								<p>example: eventId="Wild camping trip"</p>
+								<code>date : date</code>
+								<p>example: date=2016-04-01 in yyyy-mm-dd</p>
+								<code>time : time</code>
+								<p>example: time=15:00:00 in HH:MM:SS</p>
+								<code>duration : int</code>
+								<p>example: duration=120 in minutes</p>
+								<code>locationName : string</code>
+								<p>example: duration="Kungshamra 51"</p>
+
+								<code>locationLat : decimal</code>
+								<p>example: locationLat=60.205491</p>
+
+								<code>locationLong : decimal</code>
+								<p>example: locationLong=24.655900</p>
+
+								<code>description : string</code>
+								<p>example: description="Everybody comes, bring your swag, Mohit will teach us the sun dance at sunset"</p>
+
+								<code>coverPicture : string</code>
+								<p>example: description="http://wallpaperus.org/wallpapers/06/211/otters-underwater-2623x1780-wallpaper-946449.jpg"</p>
+
+								<code>spotifyPlaylist : string</code>
+								<p>example: spotifyPlaylist="https://play.spotify.com/user/patpatou/playlist/7fRekMsx0g0T3hm6XUpZwT"</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Event updated"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, new event couldn't be updated : you need to specify an id"
+}</pre>
+								<p><b>Code :</b> 400</p>
+								<pre>{
+  "error": "Error, event couldn't be updated"
+}</pre>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+			</div>
+
+			<div class="bs-docs-section" id="stuff">
+
+				<h1>Stuff</h1>
+
+				<div class="method" id="getStuff">
+					<h2>Get stuff by id</h2>
+					<p>Get the stuff by it's id</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>stuff/:id</code>
+								<p>id : id of the stuff you want to get</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>GET</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : integer</code>
+								<p>example: id=43</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 1,
+  "name": "Martini",
+  "event": 1,
+  "owner": 2039
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "No Stuff correspond to this id in the database"
+}</pre>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="createStuff">
+					<h2>Create stuff</h2>
+					<p>Create and insert a new stuff, an event is required but owner is optional</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>stuff/new</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>name : string</code>
+								<p>example: eventId="Hookers and chicken tikka"</p>
+								<code>event : int</code>
+								<p>example: event=1</p>
+								<p>The event to which the stuff will be linked</p>
+
+								<b>Optionnal:</b>
+								<code>owner : int</code>
+								<p>example: owner="2039"</p>
+								<p>ID of the user defined as owner of the stuff</p>
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 1,
+  "name": "Martini",
+  "event": 1,
+  "owner": 2039
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "No Stuff correspond to this id in the database"
+}								</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="deleteStuff">
+					<h2>Delete stuff</h2>
+					<p>Delete a stuff from the databse</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>stuff/delete</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>DELETE</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : integer</code>
+								<p>example: id=23</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Stuff successfully deleted"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, stuff couldn't be deleted"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="updateStuff">
+					<h2>Update stuff</h2>
+					<p>Update a stuff row in the database</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>stuff/update</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>PUT</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : int</code>
+								<p>example: id=939</p>
+
+								<b>Optionnal:</b>
+								<code>name : int</code>
+								<p>example: name="Moomin costume"</p>
+								<code>owner : int</code>
+								<p>example: owner="2039"</p>
+								<p>ID of the user defined as owner of the stuff</p>
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Stuff successfully updated"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, stuff couldn't be updated"
+}				</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+
+			<div class="bs-docs-section" id="user">
+
+				<h1>User</h1>
+
+				<div class="method" id="createUser">
+					<h2>Create user</h2>
+					<p>Create and insert a user into the database, this method is likely to change once the Authentication will be implemented</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>user/new</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>firstName : string</code>
+								<p>example: firstName="Charlie"</p>
+								<code>lastName : string</code>
+								<p>example: lastName="Brown"</p>
+								<code>email : string</code>
+								<p>example: email="xXx--naruto89killer--xXx@hotmail.fr"</p>
+								<p>This as to be unique in the database</p>
+
+								<b>Optional:</b><br>
+								<code>password : string</code>
+								<p>example: password="hcidlove123"</p>
+								<p>For now it is store has it is in the database, I'll encode it later on and it will move to required at the same time</p>
+
+								<code>avatar : string</code>
+								<p>example: avatar="https://i.vimeocdn.com/portrait/8748514_300x300.jpg"</p>
+								<p>If no avatar is specified it's set to this one : http://clementhamon.com/host/avatar-square.jpg</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 2043,
+  "msg": "User successfully created"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+									<pre>{
+  "error": "Error, new user couldn't be created : you need to specify a last name, first name and email"
+}			</pre>
+								<p>Or</p>
+								<pre>{
+  "error": "Error, new event couldn't be created"
+}			</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="getUserEvents">
+					<h2>Get user events</h2>
+					<p>Return all the events associated with a user along with the all attendees and the stuffs linked to this user</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>user/:id/events</code>
+								<p>id : id of the user for which we are fetching events</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>GET</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+    "id": "1",
+    "name": "Super party",
+    "date": "2016-04-01",
+    "location": "Bali",
+    "coverPicture": null,
+    "isAdmin": "1",
+    "going": "1",
+    "stuffs": [
+      {
+        "name": "Martini",
+        "owner": 2039
+      }
+    ],
+    "attendee": [
+      {
+        "firstName": "Tom",
+        "lastName": "Bombadil",
+        "avatar": ""
+      },
+      {
+        "firstName": "Franky",
+        "lastName": "Vincent",
+        "avatar": "tavu"
+      }
+    ]
+  }
+				  </pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p>If the request doesn't contain any events we return an empty array</p>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="deleteUser">
+					<h2>Delete user</h2>
+					<p>Delete a user as well as the Attendee row linking him to Events</p>
+					<p>Also set to 0 the "owner" attribute of all stuffs linked to this user</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>user/delete</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>DELETE</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b>
+								<code>id : integer</code>
+								<p>example: id=203</p>
+								<p>ID of the user to delete</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "User successfully deleted"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, User couldn't be deleted"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+
 			</div>
 		</div>
 		
