@@ -33,6 +33,8 @@
 								<ul><a href="#createEvent">@createEvent</a></ul>
 								<ul><a href="#deleteEvent">@deleteEvent</a></ul>
 								<ul><a href="#updateEvent">@updateEvent</a></ul>
+								<ul><a href="#addAttendee">@addAttendee</a></ul>
+								<ul><a href="#updateAttendee">@updateAttendee</a></ul>
 							</li>
 						</ul>
 
@@ -53,6 +55,17 @@
 								<ul><a href="#getUser">@getUser</a></ul>
 								<ul><a href="#getUserEvents">@getUserEvents</a></ul>
 								<ul><a href="#deleteUser">@deleteUser</a></ul>
+							</li>
+						</ul>
+
+						<ul>
+							<a href="#task"><h3>Task</h3></a>
+							<li style="list-style: none;">
+								<ul><a href="#getTask">@getTask</a></ul>
+								<ul><a href="#createTask">@createTask</a></ul>
+								<ul><a href="#deleteTask">@deleteTask</a></ul>
+								<ul><a href="#addTaskOwner">@addTaskOwner</a></ul>
+								<ul><a href="#deleteTaskOwner">@deleteTaskOwner</a></ul>
 							</li>
 						</ul>
 					</li>
@@ -80,6 +93,7 @@
 							<li><p>User : Create, get one by ID, get the events linked to a user</p></li>
 							<li><p>Attendee : create, delete, update </p></li>
 							<li><p>Stuffs : create, delete, update </p></li>
+							<li><p>Task : integrate Tasks in a similar way as Stuffs </p></li>
 						</ul>
 					</div> 
 				</div>
@@ -90,8 +104,8 @@
 					</div> 
 					<div class="panel-body">
 						<ul>
-							<li><p>Task : integrate Tasks in a similar way as Stuffs </p></li>
 							<li><p>User : Create user on the system ready for authentication</p></li>
+							<li><p>Attendee : Add, delete and update Attendance</p></li>
 							<li><p>Social Authentication with Facebook and Google</p></li>
 							<li><p>Implement restriction as who can do what (only admin can modify, etc..)</p></li>
 						</ul>
@@ -569,6 +583,140 @@
 					</table>
 				</div>
 
+				<div class="method" id="addAttendee">
+					<h2>Add an attendee to an event</h2>
+					<p>Create a link between an event and a user, it also here that we set if the user status is set to going and if he is an admin of the event</p>
+					<p>When a user is created by default the attribute "going" is set to true, meaning that he'll be participating to the event</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/attendance/new</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>event : integer</code>
+								<p>example: event=23</p>
+								<p>ID of the event to which we attach the user</p>
+
+								<code>user : integer</code>
+								<p>example: user="Mop the floor "</p>
+								<p>ID of the user whom we link to the event</p>
+
+								<b>Optional:</b><br>
+								<code>isAdmin : boolean</code>
+								<p>example: isAdmin=true</p>
+								<p>Set whether or not the user is an admin of the event, if nothing is set the default value is 0(=false)</p>
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "User joined the event"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error" : "Error, an event id and user id need to be specified for a user to join an event"
+}</pre> <br>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error" : "Error, new task couldn't be created"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="updateAttendee">
+					<h2>Update an attendance</h2>
+					<p>Update the link between an event and a user</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>event/attendance/update</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>PUT</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>event : integer</code>
+								<p>example: event=23</p>
+								<p>ID of the event to which we attach the user</p>
+
+								<code>user : integer</code>
+								<p>example: user="Mop the floor "</p>
+								<p>ID of the user whom we link to the event</p>
+
+								<b>Optional:</b><br>
+								<code>going : boolean</code>
+								<p>example: going=true</p>
+								<p>Set whether or not a user is participating to the event</p>
+								<code>isAdmin : boolean</code>
+								<p>example: isAdmin=false</p>
+								<p>Set whether or not the user is an admin of the event</p>
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Attendance updated"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error" : "Error, an event id and user id need to be specified to update the attendance"
+}</pre> <br>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error" : "Error, Attendance couldn't be updated"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
 			</div>
 
 			<div class="bs-docs-section" id="stuff">
@@ -695,7 +843,10 @@
 						<tr>
 							<td>URL</td>
 							<td>
-								<code>stuff/delete</code>
+								<code>stuff/delete/:id</code>
+								<code>id : integer</code>
+								<p>example: id=23</p>
+								<p>ID of the stuff to delete</p>
 							</td>
 						</tr>
 						<tr>
@@ -705,9 +856,6 @@
 						<tr>
 							<td>URL Params</td>
 							<td>
-								<b>Required:</b>
-								<code>id : integer</code>
-								<p>example: id=23</p>
 							</td>
 						</tr>
 
@@ -987,6 +1135,297 @@
 					</table>
 				</div>
 
+
+			</div>
+
+			<div class="bs-docs-section" id="task">
+
+				<h1>Task</h1>
+
+				<div class="method" id="getTask">
+					<h2>Get task</h2>
+					<p>Get the task by is id, return the task infos as well as an array of it's owners aka users to whom this task belong to</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>task/:id</code>
+								<p>id : id of the task</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>GET</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 2,
+  "name": "Do stuff",
+  "event": 1,
+  "completed": 0,
+  "owners": [
+    {
+      "id": 2039,
+      "firstName": "Tom",
+      "lastName": "Bombadil",
+      "avatar": ""
+    },
+    {
+      "id": 2043,
+      "firstName": "Charlie",
+      "lastName": "Brown",
+      "avatar": "http://clementhamon.com/host/avatar-square.jpg"
+    }
+  ]
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 404</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "No Task correspond to this id"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="createTask">
+					<h2>Create a task</h2>
+					<p>Create a task, the 'completed' field will be set at 0 (null) and the task won't have any owner</p>
+					<p>To add a owner to the task see <a href="#addTaskOwner">@addTaskOwner</a></p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>task/new</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>event : integer</code>
+								<p>example: event=23</p>
+								<p>ID of the event ot which we attach the taks</p>
+
+								<code>name : string</code>
+								<p>example: name="Mop the floor "</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "id": 3,
+  "msg": "Task successfully created"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, new task couldn't be created : you need to specify a name and an event id"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="deleteTask">
+					<h2>Delete task</h2>
+					<p>Delete a task as well as the owners linked to it</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>task/delete/:id</code>
+								<code>id : integer</code>
+								<p>example: id=23</p>
+								<p>ID of the stuff to delete</p>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>DELETE</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>id : integer</code>
+								<p>example: id=23</p>
+								<p>ID of the task to delete</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Task successfully deleted"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, task couldn't be deleted"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="addTaskOwner">
+					<h2>Add Task owner</h2>
+					<p>Add a user to a task, a task can have from zero to several owners</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>task/addOwner</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>POST</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>task : integer</code>
+								<p>example: task=202</p>
+								<p>ID of the Task to which attach a user</p>
+
+								<code>owner : integer</code>
+								<p>example: owner=2039</p>
+								<p>ID of the User to link to the task</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Owner successfully added"
+}</pre>
+							</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{"error":"Error, no id was specified for the task or the owner"}</pre>
+
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{"error":"Error, couldn't add an owner to this task. This link is already present in the database."}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="method" id="deleteTaskOwner">
+					<h2>Delete Task owner</h2>
+					<p>Delete the link between a user and a task</p>
+					<table class="table">
+						<tr>
+							<td>URL</td>
+							<td>
+								<code>task/delOwner</code>
+							</td>
+						</tr>
+						<tr>
+							<td>Method</td>
+							<td>DELETE</td>
+						</tr>
+						<tr>
+							<td>URL Params</td>
+							<td>
+								<b>Required:</b><br>
+								<code>task : integer</code>
+								<p>example: task=202</p>
+								<p>ID of the Task to attached to this user</p>
+
+								<code>owner : integer</code>
+								<p>example: owner=2039</p>
+								<p>ID of the User to attached to the task</p>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Success response</td>
+							<td>
+								<p><b>Code :</b> 200</p>
+								<b>Content :</b>
+								<pre>{
+  "msg": "Owner successfully deleted"
+}</td>
+						</tr>
+
+						<tr>
+							<td><p>Error response</p></td>
+							<td>
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, couldn't delete an owner to this task"
+}</pre>
+
+								<p><b>Code :</b> 400</p>
+								<b>Content :</b>
+								<pre>{
+  "error": "Error, no id was specified for the task or the owner"
+}</pre>
+
+							</td>
+						</tr>
+
+					</table>
+				</div>
 
 			</div>
 		</div>

@@ -21,10 +21,14 @@ class StuffController extends Controller
 
     public function createStuff(Request $request){
 
+        if (!$request->json()->get('name') || !$request->json()->get('event')) {
+            return response()->json([ "error"=>"Error, new stuff couldn't be created : you need to specify a name and an event id"],400);
+        }
+
         $id = DB::table("Stuff")->insertGetId([
-                                "name" => $request->input('name'),
-                                "event" => $request->input('event'),
-                                "owner" => $request->input('owner')]);
+                                "name" => $request->json()->get('name'),
+                                "event" => $request->json()->get('event'),
+                                "owner" => $request->json()->get('owner')]);
 
 
     	if ($id > 1) {
@@ -39,15 +43,15 @@ class StuffController extends Controller
         }
     }
 
-    public function deleteStuff(Request $request){
+    public function deleteStuff($id){
 
     	// If no id is specified in the Request we throw an error as the delete wouldn't work
-    	if (!$request->input('id')) {
+    	if (!$id) {
             return response()->json([ "error"=>"Error, no id was specified"], 400);
     	}
 
     	$content = DB::delete(" DELETE FROM `Stuff` WHERE id = ?",
-    							[$request->input('id')]);
+    							[$id]);
 
     	if ($content == 1) {
             return response()->json(array('msg' => "Stuff successfully deleted"), 200);
@@ -64,14 +68,14 @@ class StuffController extends Controller
         $columnUpdatable = array('name',"owner");
 
     	// If no id is specified in the Request we throw an error as the update wouldn't work
-    	if (!$request->input('id')) {
+    	if (!$request->json()->get('id')) {
             return response()->json([ "error"=>"Error, no id was specified"], 400);
     	}
 
         $updates = array();
         // We filter to put all the input in the request that are updatable column in an array
         //this array will then be used to perform the update
-        foreach ($request->all() as $key => $value) {
+        foreach ($request->json()->all() as $key => $value) {
             if ( in_array($key, $columnUpdatable) ) {
                 $updates[$key] = $value;
             }
@@ -79,7 +83,7 @@ class StuffController extends Controller
 
 
     	$result = DB::table("Stuff")
-                        ->where('id',$request->input('id'))
+                        ->where('id',$request->json()->get('id'))
                         ->update($updates);
 
     	if ($result > 0) {

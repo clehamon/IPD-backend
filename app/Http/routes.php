@@ -44,6 +44,10 @@ $app->delete('event/delete', 'EventController@deleteEvent');
 
 $app->put('event/update', 'EventController@updateEvent');
 
+$app->post('event/attendance/new', 'EventController@addAttendee');
+
+$app->put('event/attendance/update', 'EventController@updateAttendee');
+
 // Stuff methods
 
 $app->get('stuff/{id}', 'StuffController@getStuff');
@@ -52,7 +56,7 @@ $app->post('stuff/new', 'StuffController@createStuff');
 
 $app->put('stuff/update', 'StuffController@updateStuff');
 
-$app->delete('stuff/delete', 'StuffController@deleteStuff');
+$app->delete('stuff/delete/{id}', 'StuffController@deleteStuff');
 
 // Task methods
 
@@ -60,9 +64,16 @@ $app->get('task/{id}', 'TaskController@getTask');
 
 $app->post('task/new', 'TaskController@createTask');
 
-//$app->put('task/update', 'TaskController@updateStuff');
+$app->delete('task/delete/{id}', 'TaskController@deleteTask');
 
-$app->delete('task/delete', 'TaskController@deleteTask');
+//$app->put('task/update', 'TaskController@updateTask');
+
+
+$app->post('task/addOwner', 'TaskController@addOwner');
+
+$app->delete('task/delOwner', 'TaskController@deleteOwner');
+
+
 
 // Attendee methods
 

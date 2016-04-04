@@ -29,21 +29,21 @@ class UserController extends Controller
     public function createUser(Request $request){
 
         // If some required arguments are missing we throw an error
-        if (!$request->input('email') || !$request->input('firstName') || !$request->input('lastName')) {
+        if (!$request->json()->get('email') || !$request->json()->get('firstName') || !$request->json()->get('lastName')) {
             return response()->json([ "error"=>"Error, new user couldn't be created : you need to specify a last name, first name and email"],400);
         }
 
-        if ($request->input('avatar') == NULL) {
+        if ($request->json()->get('avatar') == NULL) {
           $avatar = "http://clementhamon.com/host/avatar-square.jpg";
         } else {
-          $avatar = $request->input('avatar');
+          $avatar = $request->json()->get('avatar');
         }
 
         $id = DB::table('User')->insertGetId([
-                                    "firstName" => $request->input('firstName'),
-                                    "lastName" => $request->input('lastName'),
-                                    "email" => $request->input('email'),
-                                    "password" => md5($request->input('password')),
+                                    "firstName" => $request->json()->get('firstName'),
+                                    "lastName" => $request->json()->get('lastName'),
+                                    "email" => $request->json()->get('email'),
+                                    "password" => md5($request->json()->get('password')),
                                     "avatar" => $avatar,
                                     "source" =>"origin",
                                 ]);
@@ -62,20 +62,20 @@ class UserController extends Controller
     public function deleteUser(Request $request){
       
       // If no id is specified in the Request we throw an error as the delete wouldn't work
-        if (!$request->input('id')) {
+        if (!$request->json()->get('id')) {
             return response()->json([ "error"=>"Error, no id was specified"], 400);
         }
 
         $updateStuff = DB::table("Stuff")
-                        ->where('owner', $request->input('id'))
+                        ->where('owner', $request->json()->get('id'))
                         ->update(["owner" => NULL]);
 
         $removeAttendee = DB::table('Attendee')
-                        ->where('userId', $request->input('id'))
+                        ->where('userId', $request->json()->get('id'))
                         ->delete();
 
         $deletedUser = DB::delete("DELETE FROM `User` WHERE id = ?",
-                  [$request->input('id')]);
+                  [$request->json()->get('id')]);
 
         if ($deletedUser > 0) {
             return response()->json([ "msg"=>"User successfully deleted"], 200);
@@ -91,7 +91,7 @@ class UserController extends Controller
 
         $overview = [];
 
-        $events = DB::select(" SELECT Event.id, Event.name, Event.date, Event.locationName as location, Event.coverPicture, 
+        $events = DB::select(" SELECT Event.id, Event.linkId, Event.name, Event.date, Event.time, Event.locationName as location, Event.coverPicture, 
                                       Attendee.isAdmin, Attendee.going
                                 FROM (Event,Attendee)
                                 WHERE Attendee.userId = ?
@@ -107,14 +107,40 @@ class UserController extends Controller
 
            $event->stuffs = $stuffs;
 
-           $attendee = DB::select(" SELECT User.firstName, User.lastName, User.avatar
+           //Give a row for each couple task/owner linked to this event
+            $tasksResult = DB::select("SELECT t.id, t.name, t.completed, u.firstName, u.lastName, u.avatar, u.id as ownerId FROM Owner as o, Task as t, User as u
+                                    WHERE t.event = ?
+                                    AND o.item = t.id
+                                    AND o.user = u.id
+                                    AND o.type = ?",[$event->id, "task"]);
+
+            // Here we group the similar tasks together and put the different owner on an 'owners' array as an attribute of the task
+            $tasks = array();
+            foreach ($tasksResult as $task) {
+                $owner = array('id' => $task->ownerId,'lastName' => $task->lastName,'firstName' => $task->firstName,'avatar' => $task->avatar );
+                if (array_key_exists($task->id, $tasks)) {
+                    array_push($tasks[$task->id]["owners"], $owner); 
+                } else{
+                    $currentTask = array('id' => $task->id,
+                                        'name' => $task->name,
+                                        'completed' => $task->completed,
+                                        'owners' => [$owner]
+                                        );
+                    $tasks[$task->id] = $currentTask;
+                }
+            }
+
+            $event->tasks = $tasks;
+
+            $attendee = DB::select(" SELECT User.firstName, User.lastName, User.avatar
                                     FROM User, Attendee 
                                     WHERE Attendee.eventId = ?
                                     AND Attendee.userId = User.id
                                     AND Attendee.going = 1",
                                     [$event->id]);
 
-           $event->attendee = $attendee;
+
+            $event->attendee = $attendee;
 
             array_push($overview, $event);
         }
