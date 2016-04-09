@@ -73,8 +73,6 @@ $app->post('task/addOwner', 'TaskController@addOwner');
 
 $app->delete('task/delOwner', 'TaskController@deleteOwner');
 
-
-
 // Attendee methods
 
 $app->post('attendee/new', 'AttendeeController@createAttendee');
@@ -82,5 +80,9 @@ $app->post('attendee/new', 'AttendeeController@createAttendee');
 $app->delete('attendee/delete', 'AttendeeController@deleteAttendee');
 
 $app->put('attendee/update', 'AttendeeController@updateAttendee');
+
+//Auth Method
+
+$app->post('auth/login', 'AuthController@loginMail');
 
 

@@ -104,9 +104,13 @@ class EventController extends Controller
             return response()->json([ "error"=>"Error, new event couldn't be created : you need to specify a name"],400);
         }
 
+        if (!$request->json()->get('admin')) {
+            return response()->json([ "error"=>"Error, new event couldn't be created : you need to specify an admin id"],400);
+        }
+        $linkId = md5($request->json()->get("name").time());
         $id = DB::table('Event')->insertGetId(
                     ["name" => $request->json()->get("name"),
-                    "linkId" => md5($request->json()->get("name").time()),
+                    "linkId" => $linkId,
                     "date" => $request->json()->get("date"),
                     "time" => $request->json()->get("time"),
                     "duration" => $request->json()->get("duration"),
@@ -118,7 +122,18 @@ class EventController extends Controller
                     "spotifyPlaylist" => $request->json()->get("spotifyPlaylist")]);
 
         if ($id !== 0) {
-            $return = array('id' => $id, "msg" => "Event created" );
+
+            //TODO Check if the user actually exist in the db
+
+            $admin = DB::table('Attendee')->insertGetId([
+                    "userId" => $request->json()->get('admin'),
+                    "eventId" => $id,
+                    "going" => 1,
+                    "isAdmin" => 1,
+                    ]);
+
+            $return = array('id' => $id, "linkId" => $linkId, "msg" => "Event created" );
+
             return response()->json($return,200);
 
         } else {

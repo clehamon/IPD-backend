@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Crypt;
+use Socialite;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -34,15 +36,16 @@ class UserController extends Controller
         }
 
         if ($request->json()->get('avatar') == NULL) {
-          $avatar = "http://clementhamon.com/host/avatar-square.jpg";
+            $avatar = "http://clementhamon.com/host/avatar-square.jpg";
         } else {
-          $avatar = $request->json()->get('avatar');
+            $avatar = $request->json()->get('avatar');
         }
 
         $id = DB::table('User')->insertGetId([
                                     "firstName" => $request->json()->get('firstName'),
                                     "lastName" => $request->json()->get('lastName'),
                                     "email" => $request->json()->get('email'),
+                                    // "password" => Crypt::encrypt($request->json()->get('password')),
                                     "password" => md5($request->json()->get('password')),
                                     "avatar" => $avatar,
                                     "source" =>"origin",
